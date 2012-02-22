@@ -111,13 +111,9 @@ BOOL const DCTManagedObjectAutomatedSetupLogExtremeFailures = NO;
     }
 		
     // if the key wasn't explicitly specified in the mapping, try the default mapping block
-    if (!keyWasMapped && [[self class] respondsToSelector:@selector(dct_defaultMappingBlockForRemoteKey)]) {
-      DCTAttributeMappingBlock mappingBlock = [selfclass dct_defaultMappingBlockForRemoteKey];
-      
-      if (mappingBlock) {
-        key = mappingBlock(key);
-        keyWasMapped = YES;
-      }
+    if (!keyWasMapped && [[self class] respondsToSelector:@selector(dct_defaultMappingForRemoteKey:)]) {
+      key = [[self class] dct_defaultMappingForRemoteKey:key];
+      keyWasMapped = YES;
     }
 		
 		if (![self dct_setSerializedValue:object forKey:key] && DCTManagedObjectAutomatedSetupLogStorageFailures)
