@@ -100,13 +100,25 @@ BOOL const DCTManagedObjectAutomatedSetupLogExtremeFailures = NO;
 		mapping = [selfclass dct_mappingFromRemoteNamesToLocalNames];
 	
 	for (__strong NSString *key in dictionary) {
-		
+		BOOL keyWasMapped = NO;
+    
 		id object = [dictionary objectForKey:key];
 		
 		// convert the key to our local storage using the provide mapping
-		if ([[mapping allKeys] containsObject:key])
-			key = [mapping objectForKey:key];
+		if ([[mapping allKeys] containsObject:key]) {
+      key = [mapping objectForKey:key];
+      keyWasMapped = YES;
+    }
 		
+    // if the key wasn't explicitly specified in the mapping, try the default mapping block
+    if (!keyWasMapped && [[self class] respondsToSelector:@selector(dct_defaultMappingBlockForRemoteKey)]) {
+      DCTAttributeMappingBlock mappingBlock = [selfclass dct_defaultMappingBlockForRemoteKey];
+      
+      if (mappingBlock) {
+        key = mappingBlock(key);
+        keyWasMapped = YES;
+      }
+    }
 		
 		if (![self dct_setSerializedValue:object forKey:key] && DCTManagedObjectAutomatedSetupLogStorageFailures)
 			NSLog(@"%@ (DCTManagedObjectAutomatedSetup): Didn't store key:%@ object:%@", NSStringFromClass([self class]), key, object);

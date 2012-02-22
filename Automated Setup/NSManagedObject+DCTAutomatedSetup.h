@@ -152,4 +152,20 @@
  
  */
 + (NSDictionary *)dct_mappingFromRemoteNamesToLocalNames;
+
+typedef NSString * (^DCTAttributeMappingBlock)(NSString *);
+
+/**
+ Allows you to specify a block that will be used to convert remote keys to local keys as a
+ default mapping strategy.
+ 
+ This means that if your remote keys map to local keys using a repeatable pattern (e.g. underscored
+ remote keys become lower camel-cased keys foo_bar -> fooBar), then you can use this block
+ to apply that transformation to each variable.
+ 
+ The value returned from this block will only be used if the mapping isn't specified explicitly
+ elsewhere.
+ */
++ (DCTAttributeMappingBlock)dct_defaultMappingBlockForRemoteKey;
+
 @end
