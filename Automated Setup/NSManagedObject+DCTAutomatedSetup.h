@@ -168,4 +168,9 @@ typedef NSString * (^DCTAttributeMappingBlock)(NSString *);
  */
 + (DCTAttributeMappingBlock)dct_defaultMappingBlockForRemoteKey;
 
+/**
+ If implemented and returns YES, NSNull values will be converted to nil automatically.
+ */
++ (BOOL)dct_shouldConvertNullsToNil;
+
 @end

@@ -220,13 +220,19 @@ BOOL const DCTManagedObjectAutomatedSetupLogExtremeFailures = NO;
 - (BOOL)dct_setSerializedValue:(id)object forKey:(NSString *)key {
 	
 	Class<DCTManagedObjectAutomatedSetup> selfclass = [self class];
+
+  // do any NSNull to nil conversion before anything else
+  if (object == [NSNull null] && [[self class] respondsToSelector:@selector(dct_shouldConvertNullsToNil)]) {
+    if ([[self class] dct_shouldConvertNullsToNil]) {
+      object = nil;
+    }
+  }
 	
 	// give the class a chance to convert the object
 	if ([[self class] respondsToSelector:@selector(dct_convertValue:toCorrectTypeForKey:)] && ![object isKindOfClass:[NSNull class]]) {
 		id returnedObject = [selfclass dct_convertValue:object toCorrectTypeForKey:key];
 		if (returnedObject) object = returnedObject;
 	}
-	
 	
 	if ([object isKindOfClass:[NSArray class]]) {
 		BOOL returnBool = NO;
